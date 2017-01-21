@@ -1,16 +1,65 @@
 
-**Light-Weight Convolutional Network for Transfer Learning in Self-Driving Cars 
+# Light-Weight Convolutional Network for Transfer Learning in Self-Driving Cars 
 
-I present my approach to teach a self-driving car how to drive using data collected from human-driving behaviour. The solution includes image processing and deep learning techniques. I've developed a new convolutional network cabale of generalizing to driving conditions in different terrains without apriori training on these roads. That was demonstrated by running the two simulators provided.  Using only three front cameras, the car is taught how to drive autonomously. This concept has been successfully demonstrated by Nvidia [1] and comma.ai[5]. 
+I present my approach to teach a self-driving car how to drive using data collected from human-driving behavior. The solution includes image processing and deep learning techniques. I've developed a new convolutional network capable of generalizing to driving conditions in different terrains without apriori training on these roads. That was demonstrated by running the two simulators provided.  Using only three front cameras, the car is taught how to drive autonomously. This concept has been successfully demonstrated by Nvidia [1] and comma.ai[5]. 
 The data sets were acquired by driving the a car in a simulator and collecting frames from the left, center, and right camera. Each frame is tagged with the location where it's stored. The steering angel as well as the car speed and brakes were also recorded. 
 
 The project solution consists of two main parts: data processing and deep learning
 
 In the data processing the images are parsed and then preprocessed for image augmentation. 
-The python generators in keras were used to augument the images on the fly and solving the memory limitation problem.
+The python generators in keras were used to augment the images on the fly and solving the memory limitation problem.
 
- 
+The network architecture that I've developed was able to generalize and successfully drive the car and finish the first lap. It was also tested in the second track and sucsessfully drove the car without prior training through all the curves in the track except the last one, which was very sharp.
 
+The CCN architecture consists of the the layers shown in the figure
+
+<img src="text4048.png">
+
+
+The final results are shown in video 1 and 2.
+
+
+
+
+
+```python
+from IPython.display import YouTubeVideo
+YouTubeVideo('bn0gIm1wwRk',width=1024, height=576)
+```
+
+
+
+
+
+        <iframe
+            width="1024"
+            height="576"
+            src="https://www.youtube.com/embed/bn0gIm1wwRk"
+            frameborder="0"
+            allowfullscreen
+        ></iframe>
+        
+
+
+
+
+```python
+from IPython.display import YouTubeVideo
+YouTubeVideo('DwoYqVe2x8I',width=1024, height=576)
+```
+
+
+
+
+
+        <iframe
+            width="1024"
+            height="576"
+            src="https://www.youtube.com/embed/DwoYqVe2x8I"
+            frameborder="0"
+            allowfullscreen
+        ></iframe>
+        
 
 
 
@@ -225,6 +274,51 @@ def my_final_model():
 
 ```
 
+For simplicity, the full architecture of the CNN is provided below
+
+__________________________________________________________________________________________________
+Layer (type)                     Output Shape          Param #     Connected to                     
+====================================================================================================
+lambda_4 (Lambda)                (None, 64, 64, 3)     0           lambda_input_4[0][0]             
+____________________________________________________________________________________________________
+maxpooling2d_9 (MaxPooling2D)    (None, 32, 32, 3)     0           lambda_4[0][0]                   
+____________________________________________________________________________________________________
+convolution2d_16 (Convolution2D) (None, 30, 30, 16)    448         maxpooling2d_9[0][0]             
+____________________________________________________________________________________________________
+maxpooling2d_10 (MaxPooling2D)   (None, 15, 15, 16)    0           convolution2d_16[0][0]           
+____________________________________________________________________________________________________
+convolution2d_17 (Convolution2D) (None, 13, 13, 24)    3480        maxpooling2d_10[0][0]            
+____________________________________________________________________________________________________
+maxpooling2d_11 (MaxPooling2D)   (None, 6, 6, 24)      0           convolution2d_17[0][0]           
+____________________________________________________________________________________________________
+convolution2d_18 (Convolution2D) (None, 4, 4, 36)      7812        maxpooling2d_11[0][0]            
+____________________________________________________________________________________________________
+convolution2d_19 (Convolution2D) (None, 3, 3, 48)      6960        convolution2d_18[0][0]           
+____________________________________________________________________________________________________
+convolution2d_20 (Convolution2D) (None, 2, 2, 64)      12352       convolution2d_19[0][0]           
+____________________________________________________________________________________________________
+flatten_4 (Flatten)              (None, 256)           0           convolution2d_20[0][0]           
+____________________________________________________________________________________________________
+dense_7 (Dense)                  (None, 512)           131584      flatten_4[0][0]                  
+____________________________________________________________________________________________________
+dropout_7 (Dropout)              (None, 512)           0           dense_7[0][0]                    
+____________________________________________________________________________________________________
+activation_7 (Activation)        (None, 512)           0           dropout_7[0][0]                  
+____________________________________________________________________________________________________
+dense_8 (Dense)                  (None, 265)           135945      activation_7[0][0]               
+____________________________________________________________________________________________________
+dropout_8 (Dropout)              (None, 265)           0           dense_8[0][0]                    
+____________________________________________________________________________________________________
+activation_8 (Activation)        (None, 265)           0           dropout_8[0][0]                  
+____________________________________________________________________________________________________
+output (Dense)                   (None, 1)             266         activation_8[0][0]               
+====================================================================================================
+Total params: 298,847
+Trainable params: 298,847
+Non-trainable params: 0
+____________________________________________________________________________________________________
+ 
+
 
 ```python
 # Model definition 
@@ -269,138 +363,6 @@ print('Best Validation score : ' + str(np.round(best_value,4)))
 ### 
  
 ```
-
-    ____________________________________________________________________________________________________
-    Layer (type)                     Output Shape          Param #     Connected to                     
-    ====================================================================================================
-    lambda_3 (Lambda)                (None, 64, 64, 3)     0           lambda_input_3[0][0]             
-    ____________________________________________________________________________________________________
-    maxpooling2d_6 (MaxPooling2D)    (None, 32, 32, 3)     0           lambda_3[0][0]                   
-    ____________________________________________________________________________________________________
-    convolution2d_11 (Convolution2D) (None, 30, 30, 16)    448         maxpooling2d_6[0][0]             
-    ____________________________________________________________________________________________________
-    maxpooling2d_7 (MaxPooling2D)    (None, 15, 15, 16)    0           convolution2d_11[0][0]           
-    ____________________________________________________________________________________________________
-    convolution2d_12 (Convolution2D) (None, 13, 13, 24)    3480        maxpooling2d_7[0][0]             
-    ____________________________________________________________________________________________________
-    maxpooling2d_8 (MaxPooling2D)    (None, 6, 6, 24)      0           convolution2d_12[0][0]           
-    ____________________________________________________________________________________________________
-    convolution2d_13 (Convolution2D) (None, 4, 4, 36)      7812        maxpooling2d_8[0][0]             
-    ____________________________________________________________________________________________________
-    convolution2d_14 (Convolution2D) (None, 3, 3, 48)      6960        convolution2d_13[0][0]           
-    ____________________________________________________________________________________________________
-    convolution2d_15 (Convolution2D) (None, 2, 2, 64)      12352       convolution2d_14[0][0]           
-    ____________________________________________________________________________________________________
-    flatten_3 (Flatten)              (None, 256)           0           convolution2d_15[0][0]           
-    ____________________________________________________________________________________________________
-    dense_5 (Dense)                  (None, 512)           131584      flatten_3[0][0]                  
-    ____________________________________________________________________________________________________
-    dropout_5 (Dropout)              (None, 512)           0           dense_5[0][0]                    
-    ____________________________________________________________________________________________________
-    activation_5 (Activation)        (None, 512)           0           dropout_5[0][0]                  
-    ____________________________________________________________________________________________________
-    dense_6 (Dense)                  (None, 265)           135945      activation_5[0][0]               
-    ____________________________________________________________________________________________________
-    dropout_6 (Dropout)              (None, 265)           0           dense_6[0][0]                    
-    ____________________________________________________________________________________________________
-    activation_6 (Activation)        (None, 265)           0           dropout_6[0][0]                  
-    ____________________________________________________________________________________________________
-    output (Dense)                   (None, 1)             266         activation_6[0][0]               
-    ====================================================================================================
-    Total params: 298,847
-    Trainable params: 298,847
-    Non-trainable params: 0
-    ____________________________________________________________________________________________________
-    Epoch 1/1
-
-
-
-    ---------------------------------------------------------------------------
-
-    KeyboardInterrupt                         Traceback (most recent call last)
-
-    <ipython-input-25-9e667df96dd0> in <module>()
-         20     history = model.fit_generator(train_generator,
-         21             samples_per_epoch=50304, nb_epoch=1,validation_data=valid_generator,
-    ---> 22                         nb_val_samples=val_size) 
-         23     fileModelJSON = 'model_' + str(i) + '.json'
-         24     fileWeights = 'model_' + str(i) + '.h5'
-
-
-    /home/ros/anaconda3/envs/keras/lib/python3.5/site-packages/keras/models.py in fit_generator(self, generator, samples_per_epoch, nb_epoch, verbose, callbacks, validation_data, nb_val_samples, class_weight, max_q_size, nb_worker, pickle_safe, **kwargs)
-        922                                         max_q_size=max_q_size,
-        923                                         nb_worker=nb_worker,
-    --> 924                                         pickle_safe=pickle_safe)
-        925 
-        926     def evaluate_generator(self, generator, val_samples,
-
-
-    /home/ros/anaconda3/envs/keras/lib/python3.5/site-packages/keras/engine/training.py in fit_generator(self, generator, samples_per_epoch, nb_epoch, verbose, callbacks, validation_data, nb_val_samples, class_weight, max_q_size, nb_worker, pickle_safe, initial_epoch)
-       1506                     outs = self.train_on_batch(x, y,
-       1507                                                sample_weight=sample_weight,
-    -> 1508                                                class_weight=class_weight)
-       1509                 except:
-       1510                     _stop.set()
-
-
-    /home/ros/anaconda3/envs/keras/lib/python3.5/site-packages/keras/engine/training.py in train_on_batch(self, x, y, sample_weight, class_weight)
-       1265             ins = x + y + sample_weights
-       1266         self._make_train_function()
-    -> 1267         outputs = self.train_function(ins)
-       1268         if len(outputs) == 1:
-       1269             return outputs[0]
-
-
-    /home/ros/anaconda3/envs/keras/lib/python3.5/site-packages/keras/backend/tensorflow_backend.py in __call__(self, inputs)
-       1601         session = get_session()
-       1602         updated = session.run(self.outputs + [self.updates_op],
-    -> 1603                               feed_dict=feed_dict)
-       1604         return updated[:len(self.outputs)]
-       1605 
-
-
-    /home/ros/anaconda3/envs/keras/lib/python3.5/site-packages/tensorflow/python/client/session.py in run(self, fetches, feed_dict, options, run_metadata)
-        715     try:
-        716       result = self._run(None, fetches, feed_dict, options_ptr,
-    --> 717                          run_metadata_ptr)
-        718       if run_metadata:
-        719         proto_data = tf_session.TF_GetBuffer(run_metadata_ptr)
-
-
-    /home/ros/anaconda3/envs/keras/lib/python3.5/site-packages/tensorflow/python/client/session.py in _run(self, handle, fetches, feed_dict, options, run_metadata)
-        913     if final_fetches or final_targets:
-        914       results = self._do_run(handle, final_targets, final_fetches,
-    --> 915                              feed_dict_string, options, run_metadata)
-        916     else:
-        917       results = []
-
-
-    /home/ros/anaconda3/envs/keras/lib/python3.5/site-packages/tensorflow/python/client/session.py in _do_run(self, handle, target_list, fetch_list, feed_dict, options, run_metadata)
-        963     if handle is None:
-        964       return self._do_call(_run_fn, self._session, feed_dict, fetch_list,
-    --> 965                            target_list, options, run_metadata)
-        966     else:
-        967       return self._do_call(_prun_fn, self._session, handle, feed_dict,
-
-
-    /home/ros/anaconda3/envs/keras/lib/python3.5/site-packages/tensorflow/python/client/session.py in _do_call(self, fn, *args)
-        970   def _do_call(self, fn, *args):
-        971     try:
-    --> 972       return fn(*args)
-        973     except errors.OpError as e:
-        974       message = compat.as_text(e.message)
-
-
-    /home/ros/anaconda3/envs/keras/lib/python3.5/site-packages/tensorflow/python/client/session.py in _run_fn(session, feed_dict, fetch_list, target_list, options, run_metadata)
-        952         return tf_session.TF_Run(session, options,
-        953                                  feed_dict, fetch_list, target_list,
-    --> 954                                  status, run_metadata)
-        955 
-        956     def _prun_fn(session, handle, feed_dict, fetch_list):
-
-
-    KeyboardInterrupt: 
-
 
 ##### References and Acknowledgment
 
