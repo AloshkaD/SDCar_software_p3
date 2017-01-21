@@ -1,17 +1,13 @@
 
 # Light-Weight Convolutional Network for Transfer Learning in Self-Driving Cars 
 
-I present my approach for teaching a self-driving car how to drive using data collected from human-driving behavior. The solution includes image processing and deep learning techniques. I've developed a new convolutional network capable of generalizing to driving conditions in different terrains without apriori training on these roads. That was demonstrated by running the two simulators provided.  Using only three front cameras, the car is taught how to drive autonomously. This concept has been successfully demonstrated by Nvidia [1] and comma.ai[5]. 
-The data sets were acquired by driving the a car in a simulator and collecting frames from the left, center, and right camera. Each frame is tagged with the location where it's stored. The steering angel as well as the car speed and brakes were also recorded. 
-
+I present my approach for teaching a self-driving car how to drive using data collected from human-driving behavior. The solution includes image processing and deep learning techniques. I've developed a new convolutional network capable of generalizing to driving conditions in different terrains without a priori training on these roads. That was demonstrated by running the two simulators provided. Using only three front cameras, the car learned how to drive autonomously. This concept has been successfully demonstrated by Nvidia [1] and comma.ai[5]. The data sets were acquired by driving the a car in a simulator and collecting frames from the left, center, and right camera. Each frame is tagged with the location where it's stored. The steering angel as well as the car speed and brakes were also recorded.
 The project solution consists of two main parts: data processing and deep learning
-
-In the data processing the images are parsed and then preprocessed for image augmentation. 
-The python generators in keras were used to augment the images on the fly to solve the memory limitation problem.
-
-The network architecture that I've developed was able to generalize and successfully drive the car and finish the first lap. It was also tested in the second track and sucsessfully drove the car without prior training through all the curves in the track except the last one, which was very sharp.
+In the data processing the images are parsed and then preprocessed for image augmentation. The python generators in keras were used to augment the images on the fly to solve the memory limitation problem.
+The network architecture that I've developed was able to generalize and successfully drive the car and finish the first lap. It was also tested in the second track and successfully drove the car without prior training through all the curves in the track except the last one, which was very sharp.
 
 The CCN architecture consists of the the layers shown in the figure
+
 
 <img src="text4048.png">
 
