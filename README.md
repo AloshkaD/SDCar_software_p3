@@ -6,7 +6,7 @@ The project solution consists of two main parts: data processing and deep learni
 In the data processing the images are parsed and then preprocessed for image augmentation. The python generators in keras were used to augment the images on the fly to solve the memory limitation problem.
 The network architecture that I've developed was able to generalize and successfully drive the car and finish the first lap. It was also tested in the second track and successfully drove the car without prior training through all the curves in the track except the last one, which was very sharp.
 
-The CCN architecture consists of the the layers shown in the figure
+The CCN architecture consists of the the layers shown in the figure, and a detailed explanation on how I built the network is provided in the CNN model section.
 
 
 <img src="text4048.png">
@@ -68,10 +68,26 @@ In the final pipeline the image brightness was changed randomly and then resized
 
 ## CNN model
 
-I've investigated Nvidia[1], Comma.ai[5], and VGG16 approaches but I wasn't able to get the desired driving behavior with the used datasets. Therefore I've developed a new model that successfully trained the car to drive on both tracks using Udacity's data only.  
+I've investigated  and tested Nvidia[1], Comma.ai[5], and VGG16[7] approaches but I wasn't able to get the desired driving behavior with the used datasets. Therefore I've developed a new model that successfully trained the car to drive on both tracks using the data sets that were provided by Udacity alone. 
 
-The model starts by normalizing the images from keras's generators and then followed by a max pooling layer to seduce the size of the input image to 32x32. This approach was very helfull in capturing the important features in the image and reducing the data points and training time. 
-Two dropout layers were added to the first fully connected layers to combat over fitting. 
+The model starts by normalizing the images that were preprocessed and provided by keras's generators. I've decided to create a normalization strategy as part of the model to take advantage of the GPU acceleration that TensorFlow utilizes. Normalization is essential for the gradient descend to work efficiently. 
+
+The normalization is followed by a 2x2 maxpooling layer to reduce the size of the input image to 32x32.When I first developed the model I didn't include this layer and the model didn't perform well. Such a behavior could be attributed to the maxpooling was capturing the important pixel in the images. Or it could be that there were more data in the image and more layers were required for the learning process.
+Overall, this approach was very helpful in capturing the important features in the image and reducing the data points and training time. 
+
+The second layer is a convolution layer with a 3x3 weight mask. There are 4 more convolution layers and they were chosen to have  adequate learning yet fast enough to accomplish the task in the shortest time possible. The activation layer for all the convolution layers is relu to ensure non-linearity of the model. I could've chosen elu or leaky-elue, but that require further investigation.There are two more maxpooling layers before a flatten layer.
+
+I have included 3 fully connected layers with 512, 256, and 1 connections respectively. The number of connections were determent to give the classification (linear regression) a statistically powerful performance. I have included two 50% dropout layers to the first and second fully connected layers to combat over fitting and enable the model to generalize well.
+
+# Training hyperparameter
+
+The training parameters included training rate, epochs and batch size.
+
+In order to find the right balance between longer and shorter training and avoid over-fitting/under-fitting of the model, I have empirically tested batch sizes between 32 and 512 and well as epochs between 5 to 30. First, I have employed a strategy where the model file is temporary stored in the memory and then compared with the newt trained model. In the end the best model with the lowest error was kept. This is similar to ModelChekpoint in keras. 
+
+However, I found that relying entirely of the loss value and validation performance doesn't necessarily guarantee the best model. Therefore I have tested each model file separately using the simulator.
+
+I came into the conclusion that a batch size of 64 and epochs of 7 are quite good for avoiding over-fitting/under-fitting based on how the car performed in the simulator. I have tested a learning rate of 0.00001 and 0.0001 and found that the latter gave the best convergence. 
 
 For simplicity, the full architecture of the CNN is provided below
 
@@ -131,3 +147,4 @@ Kunfeng Chen's blog was also helpfull in determining what combination of loss/ac
 [4]https://arxiv.org/pdf/1608.01230v1.pdf
 [5]https://github.com/commaai/research/blob/master/train_steering_model.py
 [6]https://medium.com/@KunfengChen/training-and-validation-loss-mystery-in-behavioral-cloning-for-cnn-from-udacity-sdc-project-3-dfe3eda596ba#.2mnauogtg
+[7]http://www.robots.ox.ac.uk/~vgg/research/very_deep/
