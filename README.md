@@ -6,7 +6,7 @@ The project solution consists of two main parts: data processing and deep learni
 In the data processing the images are parsed and then preprocessed for image augmentation. The python generators in keras were used to augment the images on the fly to solve the memory limitation problem.
 The network architecture that I've developed was able to generalize and successfully drive the car and finish the first lap. It was also tested in the second track and successfully drove the car without prior training through all the curves in the track except the last one, which was very sharp.
 
-The CCN architecture consists of the the layers shown in the figure, and a detailed explanation on how I built the network is provided in the CNN model section.
+The CNN architecture consists of the the layers shown in the figure, and a detailed explanation on how I built the network is provided in the CNN model section.
 
 
 <img src="text4048.png">
