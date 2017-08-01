@@ -1,5 +1,5 @@
 
-# Light-Weight Convolutional Network for Transfer Learning in Self-Driving Cars 
+# LightWeight Convolutional Network for Transfer Learning in Self-Driving Cars 
 
 I present my approach for teaching a self-driving car how to drive using data collected from human-driving behavior. The solution includes image processing and deep learning techniques. I've developed a new convolutional network capable of generalizing to driving conditions in different terrains without a priori training on these roads. That was demonstrated by running the two simulators provided. Using only three front cameras, the car learned how to drive autonomously. This concept has been successfully demonstrated by Nvidia [1] and comma.ai[5]. The data sets were acquired by driving the a car in a simulator and collecting frames from the left, center, and right camera. Each frame is tagged with the location where it's stored. The steering angel as well as the car speed and brakes were also recorded.
 The project solution consists of two main parts: data processing and deep learning
